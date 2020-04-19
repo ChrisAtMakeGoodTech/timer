@@ -1,4 +1,5 @@
-import Period from './Period.js';
+import Period from './Classes/Period.js';
+import PeriodTimer from './Classes/PeriodTimer.js';
 import setupNotifications from './setupNotifications.js';
 import { openDB, deleteDB, wrap, unwrap } from 'https://unpkg.com/idb?module';
 
@@ -53,31 +54,17 @@ const OutputSection = document.getElementById('output');
 const StartButtons = document.getElementById('start-buttons');
 const Counter = document.getElementById('counter');
 
-// const TimerApp = {};
-// function setUpButtons(){
-// 	TimerApp.periods.forEach(p => {
-// 		// add button to UI
-// 	});
-// }
-
-// setUpButtons();
-
-// TimerApp.addEventListener('period-edit', function(){
-// 	// clear buttons
-// 	setUpButtons();
-// });
-
 const msInMinute = 60000;
 const Periods = [
-	new Period('Work', 52 * msInMinute),
-	new Period('Break', 17 * msInMinute),
+	new Period('Work', 52 * msInMinute, 5 * msInMinute),
+	new Period('Break', 17 * msInMinute, 3 * msInMinute),
 ];
 
-let Timeout = null;
-let TimeEnd = null;
+let ActivePeriodTimer = null;
+let TimerIsNegative = false;
 
 window.addEventListener('beforeunload', function (e) {
-	if (Timeout !== null) {
+	if (ActivePeriodTimer !== null) {
 		e.preventDefault();
 		e.returnValue = '';
 	}
@@ -87,48 +74,34 @@ Periods.forEach(p => {
 	const NewButton = document.createElement('button');
 	NewButton.textContent = 'Start ' + p.Name;
 	NewButton.addEventListener('click', function () {
-		clearExistingPeriod()
-
-		const Now = new Date();
-		const End = new Date(Now.getTime() + p.LengthMilliseconds);
-		addOutput(`${p.Name} period started at ${getDisplayTime(Now)}. Will end at ${getDisplayTime(End)}.`);
-
-		Timeout = setTimeout(function () {
-			Timeout = null;
-			addOutput(`${p.Name} period ended.`);
-			new Notification(`${p.Name} period has ended.`);
-		}, p.LengthMilliseconds);
-
-		TimeEnd = End.getTime();
-
-		doTimer();
-
+		clearExistingPeriod();
+		ActivePeriodTimer = new PeriodTimer(p, updateCallback, expireCallback, reminderCallback);
+		addOutput(`${p.Name} period started at ${getDisplayTime(ActivePeriodTimer.PeriodStart)}. Will expire at ${getDisplayTime(ActivePeriodTimer.PeriodEnd)}.`);
 	});
 	StartButtons.appendChild(NewButton);
 });
 
-function doTimer() {
-	if (TimeEnd === null) {
-		Counter.textContent = '';
-		return;
+function reminderCallback(timeExpired, timerDisplay, period) {
+	new Notification(`${period.Name} expired ${timerDisplay} ago.`);
+}
+
+function expireCallback(period) {
+	addOutput(`${period.Name} period has expired.`);
+	new Notification(`${period.Name} period has expired.`);
+}
+
+function updateCallback(timeToExpire, timerDisplay, period) {
+	const IsNegative = timeToExpire < 0;
+	if (IsNegative !== TimerIsNegative) {
+		TimerIsNegative = IsNegative;
+		if (TimerIsNegative) {
+			Counter.classList.add('red-text');
+		} else {
+			Counter.classList.remove('red-text');
+		}
 	}
 
-	const TimeTil = TimeEnd - new Date().getTime();
-	if (TimeTil <= 0){
-		Counter.textContent = '';
-		return;
-	}
-
-	const TotalSecondsTil = Math.floor(TimeTil / 1000);
-
-	const HoursTil = Math.floor(TotalSecondsTil / (60 * 60));
-	const MinutesTil = Math.floor((TotalSecondsTil / 60) - (HoursTil * 60));
-	const SecondsTil = Math.floor(TotalSecondsTil - ((HoursTil * 60 * 60) + (MinutesTil * 60)));
-
-	Counter.textContent = `${String(HoursTil).padStart(2, '0')}:${String(MinutesTil).padStart(2, '0')}:${String(SecondsTil).padStart(2, '0')}`;
-
-	setTimeout(doTimer, 1000);
-
+	Counter.textContent = timerDisplay;
 }
 
 {
@@ -141,11 +114,11 @@ function doTimer() {
 }
 
 function clearExistingPeriod() {
-	if (Timeout !== null) {
-		addOutput(`Cleared existing period.`);
-		clearTimeout(Timeout);
-		Timeout = null;
-		TimeEnd = null;
+	if (ActivePeriodTimer !== null) {
+		ActivePeriodTimer.clearTimer();
+		addOutput(`${ActivePeriodTimer.Period.Name} period has ended.`);
+		ActivePeriodTimer = null;
+		Counter.textContent = '';
 	}
 }
 
