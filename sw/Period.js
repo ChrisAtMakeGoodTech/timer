@@ -1,4 +1,4 @@
-export default class Period {
+class Period {
 	/**
 	 * 
 	 * @param {string} name

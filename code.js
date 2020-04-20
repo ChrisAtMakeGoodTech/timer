@@ -1,8 +1,8 @@
-import Period from './Classes/Period.js';
-import PeriodTimer from './Classes/PeriodTimer.js';
+// import Period from './Classes/Period.js';
+// import PeriodTimer from './Classes/PeriodTimer.js';
 import setUpNotifications from './setup/notifications.js';
 import setUpServiceWorker from './setup/serviceworker.js';
-import { openDB, deleteDB, wrap, unwrap } from 'https://unpkg.com/idb?module';
+// import { openDB, deleteDB, wrap, unwrap } from 'https://unpkg.com/idb?module';
 
 /**
 UI
@@ -56,71 +56,88 @@ const OutputSection = document.getElementById('output');
 const StartButtons = document.getElementById('start-buttons');
 const Counter = document.getElementById('counter');
 
-const msInMinute = 60000;
-const Periods = [
-	new Period('Work', 52 * msInMinute, 5 * msInMinute),
-	new Period('Break', 17 * msInMinute, 3 * msInMinute),
-];
-
-let ActivePeriodTimer = null;
+let IsActivePeriod = false;
 let TimerIsNegative = false;
 
+const Channel = new MessageChannel();
+Channel.port1.start();
+Channel.port2.start();
+
+const MessageHandlers = {
+	channelRegistered(event) {
+		navigator.serviceWorker.controller.postMessage({ type: 'getPeriods' });
+	},
+	getPeriods(event) {
+		setUpButtons(event.data.periods);
+	},
+	periodStarted(event) {
+		const ActivePeriodTimer = event.data.timer;
+		IsActivePeriod = true;
+		addOutput(`${ActivePeriodTimer.Period.Name} period started at ${getDisplayTime(ActivePeriodTimer.PeriodStart)}. Will expire at ${getDisplayTime(ActivePeriodTimer.PeriodEnd)}.`);
+	},
+	periodEnded(event) {
+		const ActivePeriodTimer = event.data.timer;
+		IsActivePeriod = false;
+		addOutput(`${ActivePeriodTimer.Period.Name} period has ended.`);
+		Counter.textContent = '';
+	},
+	timerUpdate(event) {
+		const { timeToExpire, timerDisplay, period } = event.data;
+		const IsNegative = timeToExpire < 0;
+		if (IsNegative !== TimerIsNegative) {
+			TimerIsNegative = IsNegative;
+			if (TimerIsNegative) {
+				Counter.classList.add('red-text');
+			} else {
+				Counter.classList.remove('red-text');
+			}
+		}
+
+		Counter.textContent = timerDisplay;
+	},
+	periodExpired(event) {
+		addOutput(`${event.data.period.Name} period has expired.`);
+	},
+	periodReminder(event) {
+
+	},
+};
+
+Channel.port1.addEventListener('message', function (event) {
+	if (typeof event.data === 'object' && event.data !== null && typeof event.data.type === 'string') {
+		if (typeof MessageHandlers[event.data.type] === 'function') {
+			MessageHandlers[event.data.type](event);
+		} else {
+			console.error('Unknown message type from service worker: ' + event.data.type);
+		}
+	}
+});
+
+navigator.serviceWorker.controller.postMessage({ type: 'registerChannel' }, [Channel.port2]);
+
 window.addEventListener('beforeunload', function (e) {
-	if (ActivePeriodTimer !== null) {
+	if (IsActivePeriod) {
 		e.preventDefault();
 		e.returnValue = '';
 	}
 });
 
-Periods.forEach(p => {
-	const NewButton = document.createElement('button');
-	NewButton.textContent = 'Start ' + p.Name;
-	NewButton.addEventListener('click', function () {
-		clearExistingPeriod();
-		ActivePeriodTimer = new PeriodTimer(p, updateCallback, expireCallback, reminderCallback);
-		addOutput(`${p.Name} period started at ${getDisplayTime(ActivePeriodTimer.PeriodStart)}. Will expire at ${getDisplayTime(ActivePeriodTimer.PeriodEnd)}.`);
+function setUpButtons(periods) {
+	periods.forEach((p, i) => {
+		const NewButton = document.createElement('button');
+		NewButton.textContent = 'Start ' + p;
+		NewButton.addEventListener('click', function () {
+			navigator.serviceWorker.controller.postMessage({ type: 'startPeriod', index: i });
+		});
+		StartButtons.appendChild(NewButton);
 	});
-	StartButtons.appendChild(NewButton);
-});
-
-function reminderCallback(timeExpired, timerDisplay, period) {
-	new Notification(`${period.Name} expired ${timerDisplay} ago.`);
-}
-
-function expireCallback(period) {
-	addOutput(`${period.Name} period has expired.`);
-	new Notification(`${period.Name} period has expired.`);
-}
-
-function updateCallback(timeToExpire, timerDisplay, period) {
-	const IsNegative = timeToExpire < 0;
-	if (IsNegative !== TimerIsNegative) {
-		TimerIsNegative = IsNegative;
-		if (TimerIsNegative) {
-			Counter.classList.add('red-text');
-		} else {
-			Counter.classList.remove('red-text');
-		}
-	}
-
-	Counter.textContent = timerDisplay;
-}
-
-{
-	const NewButton = document.createElement('button');
-	NewButton.textContent = 'Clear Period';
-	NewButton.addEventListener('click', function () {
-		clearExistingPeriod()
-	});
-	StartButtons.appendChild(NewButton);
-}
-
-function clearExistingPeriod() {
-	if (ActivePeriodTimer !== null) {
-		ActivePeriodTimer.clearTimer();
-		addOutput(`${ActivePeriodTimer.Period.Name} period has ended.`);
-		ActivePeriodTimer = null;
-		Counter.textContent = '';
+	{
+		const NewButton = document.createElement('button');
+		NewButton.textContent = 'Clear Period';
+		NewButton.addEventListener('click', function () {
+			navigator.serviceWorker.controller.postMessage({ type: 'endCurrentPeriod' });
+		});
+		StartButtons.appendChild(NewButton);
 	}
 }
 

@@ -1,49 +1,77 @@
-// This is the "Offline page" service worker
+importScripts('/sw/Period.js', '/sw/PeriodTimer.js');
 
-// importScripts('https://storage.googleapis.com/workbox-cdn/releases/5.0.0/workbox-sw.js');
+self.addEventListener('install', () => {
+	self.skipWaiting();
+});
 
-// const CACHE = "pwabuilder-page";
+self.addEventListener('fetch', async (event) => { });
 
-// TODO: replace the following with the correct offline fallback page i.e.: const offlineFallbackPage = "offline.html";
-// const offlineFallbackPage = "ToDo-replace-this-name.html";
+let ActivePeriodTimer = null;
 
-// self.addEventListener("message", (event) => {
-// 	if (event.data && event.data.type === "SKIP_WAITING") {
-// 		self.skipWaiting();
-// 	}
-// });
+const msInMinute = 60000;
+const Periods = [
+	new Period('Work', 52 * msInMinute, 5 * msInMinute),
+	new Period('Break', 17 * msInMinute, 3 * msInMinute),
+	new Period('Test', 2000, 5000),
+];
 
-// self.addEventListener('install', async (event) => {
-// 	event.waitUntil(
-// 		caches.open(CACHE)
-// 			.then((cache) => cache.add(offlineFallbackPage))
-// 	);
-// });
+const Channels = new Map();
 
-// if (workbox.navigationPreload.isSupported()) {
-// 	workbox.navigationPreload.enable();
-// }
+const MessageHandlers = {
+	async registerChannel(event) {
+		console.log(event);
+		Channels.set(event.source.id, event.ports[0]);
+		const Port = Channels.get(event.source.id);
+		Port.postMessage({ type: 'channelRegistered' });
+	},
+	async getPeriods(event) {
+		console.log(event);
+		const Results = Periods.map(v => v.Name);
+		const Port = Channels.get(event.source.id);
+		Port.postMessage({ type: 'getPeriods', periods: Results });
+	},
+	async startPeriod(event) {
+		if (ActivePeriodTimer !== null) {
+			MessageHandlers.endCurrentPeriod(event);
+		}
+		ActivePeriodTimer = new PeriodTimer(Periods[event.data.index], updateCallback, expireCallback, reminderCallback);
+		for (const Port of Channels.values()) {
+			Port.postMessage({ type: 'periodStarted', timer: ActivePeriodTimer });
+		}
+	},
+	async endCurrentPeriod(event) {
+		ActivePeriodTimer.clearTimer();
+		for (const Port of Channels.values()) {
+			Port.postMessage({ type: 'periodEnded', timer: ActivePeriodTimer });
+		}
+		ActivePeriodTimer = null;
+	}
+};
 
-self.addEventListener('fetch', async (event) => {
-	// // return await fetch(event.request);
-	// if (event.request.mode === 'navigate') {
-		
-	// 	// event.respondWith((async () => {
-	// 	// 	try {
-	// 	// 		const preloadResp = await event.preloadResponse;
+function reminderCallback(timeExpired, timerDisplay, period) {
+	self.registration.showNotification(`${period.Name} expired ${timerDisplay} ago.`);
+	for (const Port of Channels.values()) {
+		Port.postMessage({ type: 'periodReminder', timeExpired, timerDisplay, period });
+	}
+}
 
-	// 	// 		if (preloadResp) {
-	// 	// 			return preloadResp;
-	// 	// 		}
+function expireCallback(period) {
+	self.registration.showNotification(`${period.Name} period has expired.`);
+	for (const Port of Channels.values()) {
+		Port.postMessage({ type: 'periodExpired', period });
+	}
+}
 
-	// 	// 		const networkResp = await fetch(event.request);
-	// 	// 		return networkResp;
-	// 	// 	} catch (error) {
+function updateCallback(timeToExpire, timerDisplay, period) {
+	for (const Port of Channels.values()) {
+		Port.postMessage({ type: 'timerUpdate', timeToExpire, timerDisplay, period });
+	}
+}
 
-	// 	// 		const cache = await caches.open(CACHE);
-	// 	// 		const cachedResp = await cache.match(offlineFallbackPage);
-	// 	// 		return cachedResp;
-	// 	// 	}
-	// 	// })());
-	// }
+self.addEventListener('message', event => {
+	if (typeof event.data === 'object' && event.data !== null && typeof event.data.type === 'string') {
+		if (typeof MessageHandlers[event.data.type] === 'function') {
+			MessageHandlers[event.data.type](event);
+		}
+	}
 });

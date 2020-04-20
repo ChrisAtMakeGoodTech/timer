@@ -1,12 +1,4 @@
-import Period from './Period.js';
-
-// start timeout
-// way to end timer
-// every second, run callback
-// callback for expiration
-// callback for expiration reminder
-
-export default class PeriodTimer {
+class PeriodTimer {
 	/**
 	 * 
 	 * @param {Period} period 
