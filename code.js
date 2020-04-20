@@ -1,6 +1,7 @@
 import Period from './Classes/Period.js';
 import PeriodTimer from './Classes/PeriodTimer.js';
-import setupNotifications from './setupNotifications.js';
+import setUpNotifications from './setup/notifications.js';
+import setUpServiceWorker from './setup/serviceworker.js';
 import { openDB, deleteDB, wrap, unwrap } from 'https://unpkg.com/idb?module';
 
 /**
@@ -48,7 +49,8 @@ idb
 	log
 */
 
-setupNotifications();
+setUpServiceWorker();
+setUpNotifications();
 
 const OutputSection = document.getElementById('output');
 const StartButtons = document.getElementById('start-buttons');

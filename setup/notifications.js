@@ -1,4 +1,4 @@
-export default function setupNotifications() {
+export default function setUpNotifications() {
 	if (Notification.permission !== 'granted') {
 		requestPermission();
 	}

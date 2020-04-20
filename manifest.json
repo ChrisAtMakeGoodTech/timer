@@ -1,0 +1,14 @@
+{
+	"name": "Timers",
+	"short_name": "Timers",
+	"description": "Timers",
+	"start_url": "http://localhost:5999",
+	"display": "standalone",
+	"icons": [
+		{
+			"src": "clock-512.webp",
+			"type": "image/webp",
+			"sizes": "512x512"
+		}
+	]
+}
