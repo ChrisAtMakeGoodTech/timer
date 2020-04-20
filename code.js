@@ -67,7 +67,7 @@ const MessageHandlers = {
 		navigator.serviceWorker.controller.postMessage({ type: 'getPeriods' });
 	},
 	getPeriods(event) {
-		setUpButtons(event.data.periods);
+		setUpButtons(StartButtons, event.data.periods);
 	},
 	periodStarted(event) {
 		const ActivePeriodTimer = event.data.timer;

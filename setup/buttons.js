@@ -1,11 +1,11 @@
-export default function setUpButtons(periods) {
+export default function setUpButtons(buttonContainer, periods) {
 	periods.forEach((p, i) => {
 		const NewButton = document.createElement('button');
 		NewButton.textContent = 'Start ' + p;
 		NewButton.addEventListener('click', function () {
 			navigator.serviceWorker.controller.postMessage({ type: 'startPeriod', index: i });
 		});
-		StartButtons.appendChild(NewButton);
+		buttonContainer.appendChild(NewButton);
 	});
 	{
 		const NewButton = document.createElement('button');
@@ -13,6 +13,6 @@ export default function setUpButtons(periods) {
 		NewButton.addEventListener('click', function () {
 			navigator.serviceWorker.controller.postMessage({ type: 'endCurrentPeriod' });
 		});
-		StartButtons.appendChild(NewButton);
+		buttonContainer.appendChild(NewButton);
 	}
 }
