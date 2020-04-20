@@ -1,0 +1,9 @@
+Todo
+	notification sounds
+	add/edit periods
+	persist logs
+	custom sounds
+	notification actions
+
+Bugs
+	Db writes twice if two windows are open

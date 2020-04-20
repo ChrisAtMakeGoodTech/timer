@@ -12,7 +12,6 @@ import setUpServiceWorker from './setup/serviceworker.js';
 import setUpChannel from './setup/Channel.js';
 import State from './objects/State.js';
 import messageHandler from './functions/messageHandler.js';
-// import { openDB, deleteDB, wrap, unwrap } from 'https://unpkg.com/idb?module';
 
 setUpServiceWorker();
 setUpNotifications();
