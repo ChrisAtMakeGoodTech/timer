@@ -1,7 +1,6 @@
-// import Period from './Classes/Period.js';
-// import PeriodTimer from './Classes/PeriodTimer.js';
 import setUpNotifications from './setup/notifications.js';
 import setUpServiceWorker from './setup/serviceworker.js';
+import setUpButtons from './setup/buttons.js';
 // import { openDB, deleteDB, wrap, unwrap } from 'https://unpkg.com/idb?module';
 
 /**
@@ -121,25 +120,6 @@ window.addEventListener('beforeunload', function (e) {
 		e.returnValue = '';
 	}
 });
-
-function setUpButtons(periods) {
-	periods.forEach((p, i) => {
-		const NewButton = document.createElement('button');
-		NewButton.textContent = 'Start ' + p;
-		NewButton.addEventListener('click', function () {
-			navigator.serviceWorker.controller.postMessage({ type: 'startPeriod', index: i });
-		});
-		StartButtons.appendChild(NewButton);
-	});
-	{
-		const NewButton = document.createElement('button');
-		NewButton.textContent = 'Clear Period';
-		NewButton.addEventListener('click', function () {
-			navigator.serviceWorker.controller.postMessage({ type: 'endCurrentPeriod' });
-		});
-		StartButtons.appendChild(NewButton);
-	}
-}
 
 function getDisplayTime(date) {
 	return `${date.getHours()}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
