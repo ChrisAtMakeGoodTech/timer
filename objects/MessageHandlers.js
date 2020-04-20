@@ -3,12 +3,13 @@ import Logger from '../Classes/Logger.js';
 import { StartButtons, Counter } from './Elements.js';
 import setUpButtons from '../setup/buttons.js';
 import getDisplayTime from '../functions/getDisplayTime.js';
+import PeriodWorker from './PeriodWorker.js'
 
 const OutputLogger = new Logger();
 
 export default {
 	channelRegistered(event) {
-		navigator.serviceWorker.controller.postMessage({ type: 'getPeriods' });
+		PeriodWorker.postMessage({ type: 'getPeriods' });
 	},
 	getPeriods(event) {
 		setUpButtons(StartButtons, event.data.periods);

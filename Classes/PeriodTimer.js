@@ -1,4 +1,6 @@
-class PeriodTimer {
+import Period from './Period.js';
+
+export default class PeriodTimer {
 	/**
 	 * 
 	 * @param {Period} period 
