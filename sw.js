@@ -2,4 +2,4 @@ self.addEventListener('install', () => {
 	self.skipWaiting();
 });
 
-self.addEventListener('fetch', async (event) => { });
+self.addEventListener('fetch', async () => { });

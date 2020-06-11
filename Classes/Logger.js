@@ -22,7 +22,7 @@ export default class Logger {
 	}
 	_displayOutput(line) {
 		const NewElement = document.createElement('div');
-		NewElement.innerHTML = `<span style="color:#777777;">${getDisplayTime(new Date())}:</span> ` + line;
+		NewElement.innerHTML = `<span style="color:#bbb;">${getDisplayTime(new Date())}:</span> ` + line;
 		OutputSection.prepend(NewElement);
 	}
 }

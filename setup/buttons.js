@@ -12,7 +12,7 @@ export default function setUpButtons(buttonContainer, periods) {
 	{
 		const NewButton = document.createElement('button');
 		NewButton.textContent = 'Clear Period';
-		NewButton.addEventListener('click', function () {
+		NewButton.addEventListener('click', async function () {
 			PeriodWorker.postMessage({ type: 'endCurrentPeriod' });
 		});
 		buttonContainer.appendChild(NewButton);

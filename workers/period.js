@@ -20,6 +20,7 @@ const MessageHandlers = {
 		if (ActivePeriodTimer !== null) {
 			MessageHandlers.endCurrentPeriod(event);
 		}
+
 		ActivePeriodTimer = new PeriodTimer(Periods[event.data.index], updateCallback, expireCallback, reminderCallback);
 		postMessage({ type: 'periodStarted', timer: ActivePeriodTimer });
 	},
