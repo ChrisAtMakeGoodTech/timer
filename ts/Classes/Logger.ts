@@ -2,8 +2,9 @@ import { OutputSection } from '../objects/Elements.js';
 import getDisplayTime from '../functions/getDisplayTime.js';
 import DbLogger from './DbLogger.js';
 
-
 export default class Logger {
+	DbLogger: DbLogger;
+
 	constructor() {
 		this.DbLogger = new DbLogger();
 		window.addEventListener('storage', async (event) => {
@@ -14,13 +15,13 @@ export default class Logger {
 			}
 		});
 	}
-	async addOutput(...lines) {
+	async addOutput(...lines: string[]) {
 		lines.forEach(async (l) => {
 			this._displayOutput(l);
 			await this.DbLogger.addLog(l);
 		});
 	}
-	_displayOutput(line) {
+	_displayOutput(line: string) {
 		const NewElement = document.createElement('div');
 		NewElement.innerHTML = `<span style="color:#bbb;">${getDisplayTime(new Date())}:</span> ` + line;
 		OutputSection.prepend(NewElement);
