@@ -11,6 +11,7 @@ export default class Period {
 
 		this.Name = name;
 		this.LengthMilliseconds = lengthMilliseconds;
-		this.ReminderFrequencyMilliseconds = Math.max(0, reminderFrequencyMilliseconds ?? 0);
+		// this.ReminderFrequencyMilliseconds = Math.max(0, reminderFrequencyMilliseconds ?? 0);
+		this.ReminderFrequencyMilliseconds = Math.max(0, reminderFrequencyMilliseconds || 0);
 	}
 }
