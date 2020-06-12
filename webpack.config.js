@@ -13,6 +13,7 @@ const copyPatterns = copyExtensions.map(ext => {
 });
 
 module.exports = {
+	mode: 'development',
 	entry: {
 		code: './code.js',
 		sw: './sw.js',
