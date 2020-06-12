@@ -8,25 +8,26 @@ import PeriodWorker from './PeriodWorker.js'
 const OutputLogger = new Logger();
 
 export default {
-	channelRegistered(event) {
+	channelRegistered(_event: MessageEvent) {
 		PeriodWorker.postMessage({ type: 'getPeriods' });
 	},
-	getPeriods(event) {
+	getPeriods(event: MessageEvent) {
 		setUpButtons(StartButtons, event.data.periods);
 	},
-	periodStarted(event) {
+	periodStarted(event: MessageEvent) {
 		const ActivePeriodTimer = event.data.timer;
 		State.IsActivePeriod = true;
 		OutputLogger.addOutput(`${ActivePeriodTimer.Period.Name} period started at ${getDisplayTime(ActivePeriodTimer.PeriodStart)}. Will expire at ${getDisplayTime(ActivePeriodTimer.PeriodEnd)}.`);
 	},
-	periodEnded(event) {
+	periodEnded(event: MessageEvent) {
 		const ActivePeriodTimer = event.data.timer;
 		State.IsActivePeriod = false;
 		OutputLogger.addOutput(`${ActivePeriodTimer.Period.Name} period has ended.`);
 		Counter.textContent = '';
 	},
-	timerUpdate(event) {
-		const { timeToExpire, timerDisplay, period } = event.data;
+	timerUpdate(event: MessageEvent) {
+		// @ts-ignore
+		const { timeToExpire, timerDisplay, period: _period } = event.data;
 		const IsNegative = timeToExpire < 0;
 		if (IsNegative !== State.TimerIsNegative) {
 			State.TimerIsNegative = IsNegative;
@@ -39,10 +40,10 @@ export default {
 
 		Counter.textContent = timerDisplay;
 	},
-	periodExpired(event) {
+	periodExpired(event: MessageEvent) {
 		OutputLogger.addOutput(`${event.data.period.Name} period has expired.`);
 	},
-	periodReminder(event) {
+	periodReminder(_event: MessageEvent) {
 
 	},
 };
