@@ -2,16 +2,6 @@ const path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 
-const copyExtensions = [
-	'css', 'html', 'json', 'webp', 'config',
-];
-
-const copyPatterns = copyExtensions.map(ext => {
-	return {
-		from: '**/*.' + ext,
-	};
-});
-
 module.exports = {
 	mode: 'development',
 	entry: {
@@ -23,7 +13,12 @@ module.exports = {
 	plugins: [
 		new CleanWebpackPlugin(),
 		new CopyPlugin({
-			patterns: copyPatterns,
+			patterns: [
+				{
+					from: '**/*',
+					context: path.resolve(__dirname, 'static'),
+				}
+			],
 			options: {
 				concurrency: 100,
 			},
