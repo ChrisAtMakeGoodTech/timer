@@ -1,4 +1,5 @@
 self.addEventListener('install', () => {
+	// @ts-ignore
 	self.skipWaiting();
 });
 

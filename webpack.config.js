@@ -4,12 +4,13 @@ const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
 	mode: 'development',
+	target: 'web',
+	context: path.resolve(__dirname, 'js'),
 	entry: {
 		code: './code.js',
 		sw: './sw.js',
 		periodWorker: './workers/period.js',
 	},
-	context: path.resolve(__dirname, 'src'),
 	plugins: [
 		new CleanWebpackPlugin(),
 		new CopyPlugin({
@@ -32,5 +33,4 @@ module.exports = {
 		},
 		path: path.resolve(__dirname, 'dist'),
 	},
-	target: 'web',
 };

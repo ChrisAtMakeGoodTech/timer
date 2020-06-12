@@ -8,7 +8,7 @@ export default class Logger {
 		this.DbLogger = new DbLogger();
 		window.addEventListener('storage', async (event) => {
 			if (event.key === `wrote-db-${DbLogger.DbName}-${DbLogger.DbStoreName}`) {
-				const id = event.newValue;
+				const id = Number(event.newValue);
 				const val = await this.DbLogger.getLog(id - 1);
 				console.log(id, val);
 			}
