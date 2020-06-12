@@ -1,11 +1,19 @@
 import Period from './Period.js';
 
+type updateCallback =  (timeToExpire: number, timerDisplay: string, period: Period) => void;
+type expireCallback = (period: Period) => void;
+type reminderCallback = (timeExpired: number, timerDisplay: string, period: Period) => void;
+
 export default class PeriodTimer {
-	/**
-	 * 
-	 * @param {Period} period 
-	 */
-	constructor(period, updateCallback, expireCallback, reminderCallback) {
+	Period: Period;
+	PeriodStart: Date;
+	PeriodEnd: Date;
+	TimeExpires: number;
+	UpdateTimeout: number | null;
+	ExpireTimeout: number | null;
+	ReminderTimeout: number | null;
+
+	constructor(period: Period, updateCallback?: updateCallback, expireCallback?: expireCallback, reminderCallback?: reminderCallback) {
 		if (typeof period !== 'object' || period === null || !(period instanceof Period)) throw new Error('period must be a Period.');
 
 		this.Period = period;
@@ -23,14 +31,14 @@ export default class PeriodTimer {
 			const doUpdateTimeout = () => {
 				const TimeToExpire = this.TimeToExpire;
 				updateCallback(TimeToExpire, this._timerDisplay(TimeToExpire), period);
-				this.UpdateTimeout = setTimeout(doUpdateTimeout, 1000);
+				this.UpdateTimeout = window.setTimeout(doUpdateTimeout, 1000);
 			};
 
 			doUpdateTimeout();
 		}
 
 		if (typeof expireCallback === 'function' || (period.ReminderFrequencyMilliseconds > 0 && typeof reminderCallback === 'function')) {
-			this.ExpireTimeout = setTimeout(() => {
+			this.ExpireTimeout = window.setTimeout(() => {
 				if (typeof expireCallback === 'function') {
 					expireCallback(period);
 				}
@@ -40,9 +48,9 @@ export default class PeriodTimer {
 					const doReminderTimeout = () => {
 						const TimeExpired = this.TimeToExpire * -1;
 						reminderCallback(TimeExpired, this._timerDisplay(TimeExpired), period);
-						this.ReminderTimeout = setTimeout(doReminderTimeout, TimeToReminder);
+						this.ReminderTimeout = window.setTimeout(doReminderTimeout, TimeToReminder);
 					};
-					this.ReminderTimeout = setTimeout(doReminderTimeout, TimeToReminder);
+					this.ReminderTimeout = window.setTimeout(doReminderTimeout, TimeToReminder);
 				}
 			}, this.TimeToExpire);
 		}
@@ -72,7 +80,7 @@ export default class PeriodTimer {
 		return this._timerDisplay(this.TimeToExpire);
 	}
 
-	_timerDisplay(timeTil) {
+	_timerDisplay(timeTil: number) {
 		const IsNegative = timeTil < 0;
 		const Sign = IsNegative ? '-' : '';
 
