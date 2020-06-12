@@ -1,15 +1,3 @@
-// import './style.css';
-
-
-/**
- * Todo
- * notification sounds
- * add/edit periods
- * persist logs
- * custom sounds
- * notification actions
- */
-
 import setUpNotifications from './setup/notifications.js';
 import setUpServiceWorker from './setup/serviceworker.js';
 import setUpChannel from './setup/Channel.js';
