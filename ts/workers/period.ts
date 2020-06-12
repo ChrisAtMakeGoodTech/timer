@@ -14,7 +14,8 @@ const MessageHandlers = {
 	async getPeriods(event: MessageEvent) {
 		console.log(event);
 		const Results = Periods.map(v => v.Name);
-		postMessage({ type: 'getPeriods', periods: Results }, self.location.origin);
+		// @ts-ignore
+		postMessage({ type: 'getPeriods', periods: Results });
 	},
 	async startPeriod(event: MessageEvent) {
 		if (ActivePeriodTimer !== null) {
@@ -22,27 +23,32 @@ const MessageHandlers = {
 		}
 
 		ActivePeriodTimer = new PeriodTimer(Periods[event.data.index], updateCallback, expireCallback, reminderCallback);
-		postMessage({ type: 'periodStarted', timer: ActivePeriodTimer }, self.location.origin);
+		// @ts-ignore
+		postMessage({ type: 'periodStarted', timer: ActivePeriodTimer });
 	},
 	async endCurrentPeriod(_event: MessageEvent) {
 		ActivePeriodTimer!.clearTimer();
-		postMessage({ type: 'periodEnded', timer: ActivePeriodTimer }, self.location.origin);
+		// @ts-ignore
+		postMessage({ type: 'periodEnded', timer: ActivePeriodTimer });
 		ActivePeriodTimer = null;
 	}
 };
 
 function reminderCallback(timeExpired: number, timerDisplay: string, period: Period) {
 	new Notification(`${period.Name} expired ${timerDisplay} ago.`);
-	postMessage({ type: 'periodReminder', timeExpired, timerDisplay, period }, self.location.origin);
+	// @ts-ignore
+	postMessage({ type: 'periodReminder', timeExpired, timerDisplay, period });
 }
 
 function expireCallback(period: Period) {
 	new Notification(`${period.Name} period has expired.`);
-	postMessage({ type: 'periodExpired', period }, self.location.origin);
+	// @ts-ignore
+	postMessage({ type: 'periodExpired', period });
 }
 
 function updateCallback(timeToExpire: number, timerDisplay: string, period: Period) {
-	postMessage({ type: 'timerUpdate', timeToExpire, timerDisplay, period }, self.location.origin);
+	// @ts-ignore
+	postMessage({ type: 'timerUpdate', timeToExpire, timerDisplay, period });
 }
 
 self.addEventListener('message', event => {
