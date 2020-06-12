@@ -1,6 +1,6 @@
 import PeriodWorker from '../objects/PeriodWorker.js'
 
-export default function setUpButtons(buttonContainer, periods) {
+export default function setUpButtons(buttonContainer: HTMLElement, periods: string[]) {
 	periods.forEach((p, i) => {
 		const NewButton = document.createElement('button');
 		NewButton.textContent = 'Start ' + p;

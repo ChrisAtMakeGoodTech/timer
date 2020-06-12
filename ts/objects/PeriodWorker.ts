@@ -1,0 +1,1 @@
+export default new Worker('/workers/period.js', {type: 'module'});
