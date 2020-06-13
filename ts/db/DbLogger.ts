@@ -1,5 +1,4 @@
 import { DBSchema, openDB, deleteDB as _deleteDB, wrap as _wrap, unwrap as _unwrap, IDBPDatabase } from 'idb';
-import Reminder from '../helpers/Reminder';
 
 interface IStatics {
 	DbName: 'TimersDb';
@@ -28,29 +27,30 @@ interface LogRecord extends DBSchema {
 	};
 };
 
-Reminder.Bug('Make sure Db is set before trying to use it.');
+let DbPromise: Promise<IDBPDatabase<LogRecord>> | null = openDB<LogRecord>(Statics.DbName, Statics.DbVersion, {
+	upgrade(db, _oldVersion, _newVersion, _transaction) {
+		const Store = db.createObjectStore(Statics.DbStoreName, {
+			keyPath: Statics.DbKeyPath,
+			autoIncrement: true,
+		});
+		Store.createIndex(Statics.DbIndexName, Statics.DbIndexName);
+	},
+	blocked() {
+		// …
+	},
+	blocking() {
+		// …
+	},
+	terminated() {
+		// …
+	},
+});
 
 let Db: IDBPDatabase<LogRecord>;
 
 async function OpenDb() {
-	Db = await openDB<LogRecord>(Statics.DbName, Statics.DbVersion, {
-		upgrade(db, _oldVersion, _newVersion, _transaction) {
-			const Store = db.createObjectStore(Statics.DbStoreName, {
-				keyPath: Statics.DbKeyPath,
-				autoIncrement: true,
-			});
-			Store.createIndex(Statics.DbIndexName, Statics.DbIndexName);
-		},
-		blocked() {
-			// …
-		},
-		blocking() {
-			// …
-		},
-		terminated() {
-			// …
-		},
-	});
+	Db = await DbPromise!;
+	DbPromise = null;
 }
 
 OpenDb();
@@ -67,10 +67,12 @@ export default class DbLogger {
 	}
 
 	async addLog(line: string) {
+		if (DbPromise) await DbPromise;
 		const id = await Db.add(Statics.DbStoreName, { text: line, date: new Date() });
 		localStorage.setItem(`wrote-db-${Statics.DbName}-${Statics.DbStoreName}`, String(id));
 	}
 	async getLog(id: number) {
+		if (DbPromise) await DbPromise;
 		return await Db.get(Statics.DbStoreName, id);
 	}
 };
