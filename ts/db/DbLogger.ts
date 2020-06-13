@@ -24,7 +24,7 @@ interface LogRecord extends DBSchema {
 		};
 		indexes: { 'date': Date };
 	};
-}
+};
 
 Reminder.Bug('Make sure Db is set before trying to use it.');
 
