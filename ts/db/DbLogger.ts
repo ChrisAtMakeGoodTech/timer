@@ -1,4 +1,5 @@
 import { openDB, deleteDB as _deleteDB, wrap as _wrap, unwrap as _unwrap, IDBPDatabase } from 'idb';
+import Reminder from '../helpers/Reminder';
 
 const Statics = {
 	DbName: 'TimersDb',
@@ -7,7 +8,9 @@ const Statics = {
 	DbKeyPath: 'id',
 };
 
-let Db: IDBPDatabase | null;
+Reminder.Bug('Make sure Db is set before trying to use it.');
+
+let Db: IDBPDatabase;
 
 async function OpenDb() {
 	Db = await openDB(Statics.DbName, Statics.DbVersion, {

@@ -1,6 +1,6 @@
 import { OutputSection } from '../objects/Elements';
 import getDisplayTime from '../functions/getDisplayTime';
-import DbLogger from './DbLogger';
+import DbLogger from '../db/DbLogger';
 
 export default class Logger {
 	DbLogger: DbLogger;
