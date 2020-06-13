@@ -1,4 +1,4 @@
-import PeriodWorker from '../objects/PeriodWorker.js'
+import PeriodWorker from '../objects/PeriodWorker'
 
 type MessageHandler = (event:MessageEvent) => void;
 

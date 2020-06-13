@@ -1,8 +1,8 @@
-import setUpNotifications from './setup/notifications.js';
-import setUpServiceWorker from './setup/serviceworker.js';
-import setUpChannel from './setup/Channel.js';
-import State from './objects/State.js';
-import messageHandler from './functions/messageHandler.js';
+import setUpNotifications from './setup/notifications';
+import setUpServiceWorker from './setup/serviceworker';
+import setUpChannel from './setup/Channel';
+import State from './objects/State';
+import messageHandler from './functions/messageHandler';
 
 setUpServiceWorker();
 setUpNotifications();

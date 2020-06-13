@@ -1,6 +1,6 @@
-import { OutputSection } from '../objects/Elements.js';
-import getDisplayTime from '../functions/getDisplayTime.js';
-import DbLogger from './DbLogger.js';
+import { OutputSection } from '../objects/Elements';
+import getDisplayTime from '../functions/getDisplayTime';
+import DbLogger from './DbLogger';
 
 export default class Logger {
 	DbLogger: DbLogger;

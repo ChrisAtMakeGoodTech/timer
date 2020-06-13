@@ -1,4 +1,4 @@
-import MessageHandlers from '../objects/MessageHandlers.js';
+import MessageHandlers from '../objects/MessageHandlers';
 
 export default function messageHandler(event: MessageEvent) {
 	if (typeof event.data === 'object' && event.data !== null && typeof event.data.type === 'string') {

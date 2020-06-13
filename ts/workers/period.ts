@@ -1,5 +1,5 @@
-import Period from '../Classes/Period.js';
-import PeriodTimer from '../Classes/PeriodTimer.js';
+import Period from '../Classes/Period';
+import PeriodTimer from '../Classes/PeriodTimer';
 
 let ActivePeriodTimer: PeriodTimer | null = null;
 
@@ -12,7 +12,6 @@ const Periods = [
 
 const MessageHandlers = {
 	async getPeriods(event: MessageEvent) {
-		console.log(event);
 		const Results = Periods.map(v => v.Name);
 		// @ts-ignore
 		postMessage({ type: 'getPeriods', periods: Results });

@@ -1,4 +1,4 @@
-import PeriodWorker from '../objects/PeriodWorker.js'
+import PeriodWorker from '../objects/PeriodWorker'
 
 export default function setUpButtons(buttonContainer: HTMLElement, periods: string[]) {
 	periods.forEach((p, i) => {

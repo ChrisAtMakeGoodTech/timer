@@ -1,9 +1,9 @@
-import State from './State.js';
-import Logger from '../Classes/Logger.js';
-import { StartButtons, Counter } from './Elements.js';
-import setUpButtons from '../setup/buttons.js';
-import getDisplayTime from '../functions/getDisplayTime.js';
-import PeriodWorker from './PeriodWorker.js'
+import State from './State';
+import Logger from '../Classes/Logger';
+import { StartButtons, Counter } from './Elements';
+import setUpButtons from '../setup/buttons';
+import getDisplayTime from '../functions/getDisplayTime';
+import PeriodWorker from './PeriodWorker'
 
 const OutputLogger = new Logger();
 
