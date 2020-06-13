@@ -4,6 +4,7 @@ const Reminder = {
 	Improve: (_message: string) => {},
 	Bug: (_message: string) => {},
 	PossibleBug: (_message: string) => {},
+	Consider: (_message: string) => {},
 };
 
 Object.freeze(Reminder);
