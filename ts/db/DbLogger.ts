@@ -6,6 +6,7 @@ interface IStatics {
 	DbVersion: number;
 	DbStoreName: 'logs';
 	DbKeyPath: 'id';
+	DbIndexName: 'date';
 };
 
 const Statics: IStatics = {
@@ -13,6 +14,7 @@ const Statics: IStatics = {
 	DbVersion: 2,
 	DbStoreName: 'logs',
 	DbKeyPath: 'id',
+	DbIndexName: 'date',
 };
 
 interface LogRecord extends DBSchema {
@@ -37,7 +39,7 @@ async function OpenDb() {
 				keyPath: Statics.DbKeyPath,
 				autoIncrement: true,
 			});
-			Store.createIndex('date', 'date');
+			Store.createIndex(Statics.DbIndexName, Statics.DbIndexName);
 		},
 		blocked() {
 			// …
