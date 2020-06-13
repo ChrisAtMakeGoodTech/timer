@@ -1,8 +1,48 @@
+:root {
+	--main-bg-color: #111;
+	--main-text-color: #fff;
+}
+
 body {
-	background: #111;
-	color: #fff;
+	background: var(--main-bg-color);
+	color: var(--main-text-color);
 }
 
 .red-text {
 	color: red;
+}
+
+#counter {
+	height: 20px;
+}
+
+#tabs {
+	padding-top: 8px;
+	border-bottom: 1px solid #ccc;
+}
+
+.tab {
+	display: inline-block;
+	border: 1px solid #ccc;
+	border-bottom: none;
+	padding: 8px;
+	border-radius: 8px 8px 0 0;
+	font-weight: bold;
+	color: #111;
+	background: #ccc;
+}
+
+.tab.active {
+	background: var(--main-bg-color);
+	color: var(--main-text-color);
+}
+
+.section {
+	display: none;
+	border: 1px solid #ccc;
+	border-top: none;
+}
+
+.section.active {
+	display: block;
 }

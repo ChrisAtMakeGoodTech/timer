@@ -1,4 +1,4 @@
-import { OutputSection } from '../objects/Elements';
+import { LogSection } from '../objects/Elements';
 import getDisplayTime from '../functions/getDisplayTime';
 import DbLogger from '../db/DbLogger';
 
@@ -24,6 +24,6 @@ export default class Logger {
 	_displayOutput(line: string) {
 		const NewElement = document.createElement('div');
 		NewElement.innerHTML = `<span style="color:#bbb;">${getDisplayTime(new Date())}:</span> ` + line;
-		OutputSection.prepend(NewElement);
+		LogSection.prepend(NewElement);
 	}
 }
