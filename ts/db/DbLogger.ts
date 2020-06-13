@@ -52,7 +52,6 @@ export default class DbLogger {
 	}
 	async getLog(id: number) {
 		const val = await Db!.get(Statics.DbStoreName, id);
-		console.log(id, val);
 		return val;
 	}
 }
