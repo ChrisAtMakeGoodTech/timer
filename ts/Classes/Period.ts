@@ -1,4 +1,6 @@
-export default class Period {
+import IPeriod from "./IPeriod";
+
+export default class Period implements IPeriod {
 	Name: string;
 	LengthMilliseconds: number;
 	ReminderFrequencyMilliseconds: number;

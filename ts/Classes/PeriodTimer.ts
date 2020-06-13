@@ -1,11 +1,11 @@
-import Period from './Period.js';
+import IPeriod from './IPeriod.js';
 
-type updateCallback =  (timeToExpire: number, timerDisplay: string, period: Period) => void;
-type expireCallback = (period: Period) => void;
-type reminderCallback = (timeExpired: number, timerDisplay: string, period: Period) => void;
+type updateCallback = (timeToExpire: number, timerDisplay: string, period: IPeriod) => void;
+type expireCallback = (period: IPeriod) => void;
+type reminderCallback = (timeExpired: number, timerDisplay: string, period: IPeriod) => void;
 
 export default class PeriodTimer {
-	Period: Period;
+	Period: IPeriod
 	PeriodStart: Date;
 	PeriodEnd: Date;
 	TimeExpires: number;
@@ -13,9 +13,7 @@ export default class PeriodTimer {
 	ExpireTimeout: number | null;
 	ReminderTimeout: number | null;
 
-	constructor(period: Period, updateCallback?: updateCallback, expireCallback?: expireCallback, reminderCallback?: reminderCallback) {
-		if (typeof period !== 'object' || period === null || !(period instanceof Period)) throw new Error('period must be a Period.');
-
+	constructor(period: IPeriod, updateCallback?: updateCallback, expireCallback?: expireCallback, reminderCallback?: reminderCallback) {
 		this.Period = period;
 
 		this.PeriodStart = new Date();

@@ -1,11 +1,12 @@
 import PeriodWorker from '../objects/PeriodWorker'
+import IPeriod from '../Classes/IPeriod';
 
-export default function setUpButtons(buttonContainer: HTMLElement, periods: string[]) {
-	periods.forEach((p, i) => {
+export default function setUpButtons(buttonContainer: HTMLElement, periods: IPeriod[]) {
+	periods.forEach((p) => {
 		const NewButton = document.createElement('button');
-		NewButton.textContent = 'Start ' + p;
+		NewButton.textContent = 'Start ' + p.Name;
 		NewButton.addEventListener('click', function () {
-			PeriodWorker.postMessage({ type: 'startPeriod', index: i });
+			PeriodWorker.postMessage({ type: 'startPeriod', index: p.id });
 		});
 		buttonContainer.appendChild(NewButton);
 	});
