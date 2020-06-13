@@ -6,7 +6,7 @@ interface IStatics {
 	DbVersion: number;
 	DbStoreName: 'logs';
 	DbKeyPath: 'id';
-}
+};
 
 const Statics: IStatics = {
 	DbName: 'TimersDb',
@@ -71,4 +71,4 @@ export default class DbLogger {
 	async getLog(id: number) {
 		return await Db.get(Statics.DbStoreName, id);
 	}
-}
+};
