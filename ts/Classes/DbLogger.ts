@@ -44,13 +44,11 @@ export default class DbLogger {
 	}
 
 	async addLog(line: string) {
-		// @ts-ignore
-		const id: string = await Db.add(Statics.DbStoreName, { text: line, date: new Date() });
+		const id = <string>await Db!.add(Statics.DbStoreName, { text: line, date: new Date() });
 		localStorage.setItem(`wrote-db-${Statics.DbName}-${Statics.DbStoreName}`, id);
 	}
 	async getLog(id: number) {
-		// @ts-ignore
-		const val = await Db.get(Statics.DbStoreName, id);
+		const val = await Db!.get(Statics.DbStoreName, id);
 		console.log(id, val);
 		return val;
 	}
