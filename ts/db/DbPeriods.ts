@@ -1,5 +1,4 @@
 import { DBSchema, openDB, deleteDB as _deleteDB, wrap as _wrap, unwrap as _unwrap, IDBPDatabase } from 'idb';
-import Reminder from '../helpers/Reminder';
 import Period from '../Classes/Period';
 
 interface IStatics {
@@ -26,29 +25,30 @@ interface PeriodRecord extends DBSchema {
 	};
 };
 
-Reminder.Bug('Make sure Db is set before trying to use it.');
+let DbPromise: Promise<IDBPDatabase<PeriodRecord>> | null = openDB<PeriodRecord>(Statics.DbName, Statics.DbVersion, {
+	upgrade(db, _oldVersion, _newVersion, _transaction) {
+		const Store = db.createObjectStore(Statics.DbStoreName, {
+			keyPath: Statics.DbKeyPath,
+			autoIncrement: true,
+		});
+		Store.createIndex(Statics.DbIndexName, Statics.DbIndexName);
+	},
+	blocked() {
+		// …
+	},
+	blocking() {
+		// …
+	},
+	terminated() {
+		// …
+	},
+});
 
 let Db: IDBPDatabase<PeriodRecord>;
 
 async function OpenDb() {
-	Db = await openDB<PeriodRecord>(Statics.DbName, Statics.DbVersion, {
-		upgrade(db, _oldVersion, _newVersion, _transaction) {
-			const Store = db.createObjectStore(Statics.DbStoreName, {
-				keyPath: Statics.DbKeyPath,
-				autoIncrement: true,
-			});
-			Store.createIndex(Statics.DbIndexName, Statics.DbIndexName);
-		},
-		blocked() {
-			// …
-		},
-		blocking() {
-			// …
-		},
-		terminated() {
-			// …
-		},
-	});
+	Db = await DbPromise!;
+	DbPromise = null;
 }
 
 OpenDb();
@@ -65,12 +65,15 @@ export default class DbPeriods {
 	}
 
 	async addPeriod(period: Period) {
+		if (DbPromise) await DbPromise;
 		return await Db.add(Statics.DbStoreName, period);
 	}
 	async getPeriodById(id: number) {
+		if (DbPromise) await DbPromise;
 		return await Db.get(Statics.DbStoreName, id);
 	}
 	async getPeriodByName(name: string) {
+		if (DbPromise) await DbPromise;
 		return await Db.getFromIndex(Statics.DbStoreName, Statics.DbIndexName, name);
 	}
 };
