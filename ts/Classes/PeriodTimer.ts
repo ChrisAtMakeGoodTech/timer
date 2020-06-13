@@ -31,14 +31,14 @@ export default class PeriodTimer {
 			const doUpdateTimeout = () => {
 				const TimeToExpire = this.TimeToExpire;
 				updateCallback(TimeToExpire, this._timerDisplay(TimeToExpire), period);
-				this.UpdateTimeout = window.setTimeout(doUpdateTimeout, 1000);
+				this.UpdateTimeout = self.setTimeout(doUpdateTimeout, 1000);
 			};
 
 			doUpdateTimeout();
 		}
 
 		if (typeof expireCallback === 'function' || (period.ReminderFrequencyMilliseconds > 0 && typeof reminderCallback === 'function')) {
-			this.ExpireTimeout = window.setTimeout(() => {
+			this.ExpireTimeout = self.setTimeout(() => {
 				if (typeof expireCallback === 'function') {
 					expireCallback(period);
 				}
@@ -48,9 +48,9 @@ export default class PeriodTimer {
 					const doReminderTimeout = () => {
 						const TimeExpired = this.TimeToExpire * -1;
 						reminderCallback(TimeExpired, this._timerDisplay(TimeExpired), period);
-						this.ReminderTimeout = window.setTimeout(doReminderTimeout, TimeToReminder);
+						this.ReminderTimeout = self.setTimeout(doReminderTimeout, TimeToReminder);
 					};
-					this.ReminderTimeout = window.setTimeout(doReminderTimeout, TimeToReminder);
+					this.ReminderTimeout = self.setTimeout(doReminderTimeout, TimeToReminder);
 				}
 			}, this.TimeToExpire);
 		}
