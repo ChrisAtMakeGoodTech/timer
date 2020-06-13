@@ -11,7 +11,7 @@ const Periods = [
 ];
 
 const MessageHandlers = {
-	async getPeriods(event: MessageEvent) {
+	async getPeriods(_event: MessageEvent) {
 		const Results = Periods.map(v => v.Name);
 		// @ts-ignore
 		postMessage({ type: 'getPeriods', periods: Results });
