@@ -2,17 +2,25 @@ const path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 
-module.exports = {
+const sharedSettings = {
 	mode: 'development',
-	target: 'web',
 	context: path.resolve(__dirname, 'js'),
+	output: {
+		filename: (chunkData) => {
+			return chunkData.chunk.name === 'periodWorker'
+				? 'workers/period.js'
+				: chunkData.chunk.name + '.js';
+		},
+		path: path.resolve(__dirname, 'dist'),
+	},
+};
+
+const main = {
+	target: 'web',
 	entry: {
 		code: './code.js',
-		sw: './sw.js',
-		periodWorker: './workers/period.js',
 	},
 	plugins: [
-		new CleanWebpackPlugin(),
 		new CopyPlugin({
 			patterns: [
 				{
@@ -25,12 +33,20 @@ module.exports = {
 			},
 		}),
 	],
-	output: {
-		filename: (chunkData) => {
-			return chunkData.chunk.name === 'periodWorker'
-				? 'workers/period.js'
-				: chunkData.chunk.name + '.js';
-		},
-		path: path.resolve(__dirname, 'dist'),
-	},
 };
+
+const workers = {
+	target: 'webworker',
+	entry: {
+		sw: './sw.js',
+		periodWorker: './workers/period.js',
+	},
+	plugins: [
+		new CleanWebpackPlugin(),
+	],
+};
+
+Object.assign(main, sharedSettings);
+Object.assign(workers, sharedSettings);
+
+module.exports = [main, workers];
