@@ -1,19 +1,37 @@
-import { openDB, deleteDB as _deleteDB, wrap as _wrap, unwrap as _unwrap, IDBPDatabase } from 'idb';
+import { DBSchema, openDB, deleteDB as _deleteDB, wrap as _wrap, unwrap as _unwrap, IDBPDatabase } from 'idb';
 import Reminder from '../helpers/Reminder';
 
-const Statics = {
+interface IStatics {
+	DbName: 'TimersDb';
+	DbVersion: number;
+	DbStoreName: 'logs';
+	DbKeyPath: 'id';
+}
+
+const Statics: IStatics = {
 	DbName: 'TimersDb',
 	DbVersion: 2,
 	DbStoreName: 'logs',
 	DbKeyPath: 'id',
 };
 
+interface LogRecord extends DBSchema {
+	'logs': {
+		key: number;
+		value: {
+			date: Date,
+			text: string,
+		};
+		indexes: { 'date': Date };
+	};
+}
+
 Reminder.Bug('Make sure Db is set before trying to use it.');
 
-let Db: IDBPDatabase;
+let Db: IDBPDatabase<LogRecord>;
 
 async function OpenDb() {
-	Db = await openDB(Statics.DbName, Statics.DbVersion, {
+	Db = await openDB<LogRecord>(Statics.DbName, Statics.DbVersion, {
 		upgrade(db, _oldVersion, _newVersion, _transaction) {
 			const Store = db.createObjectStore(Statics.DbStoreName, {
 				keyPath: Statics.DbKeyPath,
@@ -47,11 +65,10 @@ export default class DbLogger {
 	}
 
 	async addLog(line: string) {
-		const id = <string>await Db!.add(Statics.DbStoreName, { text: line, date: new Date() });
-		localStorage.setItem(`wrote-db-${Statics.DbName}-${Statics.DbStoreName}`, id);
+		const id = await Db.add(Statics.DbStoreName, { text: line, date: new Date() });
+		localStorage.setItem(`wrote-db-${Statics.DbName}-${Statics.DbStoreName}`, String(id));
 	}
 	async getLog(id: number) {
-		const val = await Db!.get(Statics.DbStoreName, id);
-		return val;
+		return await Db.get(Statics.DbStoreName, id);
 	}
 }
