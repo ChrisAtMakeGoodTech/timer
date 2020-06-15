@@ -1,7 +1,6 @@
-export default function setUpTabs() {
-	const TabContainer = document.getElementById('tabs')!;
-	const SectionContainer = document.getElementById('sections')!;
+import { TabContainer, SectionContainer } from "../objects/Elements";
 
+export default function setUpTabs() {
 	const Tabs = <HTMLElement[]>Array.prototype.map.call(TabContainer.children, e => e);
 	const Sections = <HTMLElement[]>Array.prototype.map.call(SectionContainer.children, e => e);
 
