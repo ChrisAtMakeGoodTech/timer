@@ -4,11 +4,13 @@ import setUpChannel from './setup/Channel';
 import State from './objects/State';
 import messageHandler from './functions/messageHandler';
 import setUpTabs from './setup/tabs';
+import setUpPeriodView from './setup/periodView';
 
 setUpServiceWorker();
 setUpNotifications();
 setUpChannel(messageHandler);
 setUpTabs();
+setUpPeriodView();
 
 window.addEventListener('beforeunload', function (e) {
 	if (State.IsActivePeriod) {
