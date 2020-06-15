@@ -46,3 +46,7 @@ body {
 .section.active {
 	display: block;
 }
+
+.log-timestamp {
+	color: #bbb;
+}

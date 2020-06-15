@@ -11,7 +11,6 @@ export default class Logger {
 			if (event.key === `wrote-db-${DbLogger.DbName}-${DbLogger.DbStoreName}`) {
 				const id = Number(event.newValue);
 				const val = await this.DbLogger.getLog(id - 1);
-				console.log(id, val);
 			}
 		});
 	}
@@ -23,7 +22,7 @@ export default class Logger {
 	}
 	_displayOutput(line: string) {
 		const NewElement = document.createElement('div');
-		NewElement.innerHTML = `<span style="color:#bbb;">${getDisplayTime(new Date())}:</span> ` + line;
+		NewElement.innerHTML = `<span class="log-timestamp">${getDisplayTime(new Date())}:</span> ` + line;
 		LogSection.prepend(NewElement);
 	}
 }
