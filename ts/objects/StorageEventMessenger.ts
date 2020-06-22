@@ -9,7 +9,7 @@ const Subscriptions = new Map<StorageSubscriptionTypes, StorageCallback[]>();
 const StorageEventKeyPrefix = 'StorageEvent--';
 const PrefixLength = StorageEventKeyPrefix.length;
 
-window.addEventListener('storage', async (event) => {
+addEventListener('storage', async (event: StorageEvent) => {
 	if (!event.key || event.newValue === null) return;
 
 	if (event.key.startsWith(StorageEventKeyPrefix)) {
