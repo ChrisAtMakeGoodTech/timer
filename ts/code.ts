@@ -1,16 +1,7 @@
-import setUpNotifications from './setup/notifications';
-import setUpServiceWorker from './setup/serviceworker';
-import setUpChannel from './setup/Channel';
 import State from './objects/State';
-import messageHandler from './functions/messageHandler';
-import setUpTabs from './setup/tabs';
-import setUpPeriodView from './setup/periodView';
+import mainSetup from './setup/mainSetup';
 
-setUpServiceWorker();
-setUpNotifications();
-setUpChannel(messageHandler);
-setUpTabs();
-setUpPeriodView();
+mainSetup();
 
 window.addEventListener('beforeunload', function (e) {
 	if (State.IsActivePeriod) {
