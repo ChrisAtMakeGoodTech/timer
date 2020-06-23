@@ -1,18 +1,16 @@
-import { OutputSection } from '../objects/Elements';
+import { LogSection } from '../objects/Elements';
 import getDisplayTime from '../functions/getDisplayTime';
 import DbLogger from '../db/DbLogger';
+import StorageEventMessenger from '../objects/StorageEventMessenger';
 
 export default class Logger {
 	DbLogger: DbLogger;
 
 	constructor() {
 		this.DbLogger = new DbLogger();
-		window.addEventListener('storage', async (event) => {
-			if (event.key === `wrote-db-${DbLogger.DbName}-${DbLogger.DbStoreName}`) {
-				const id = Number(event.newValue);
-				const val = await this.DbLogger.getLog(id - 1);
-				console.log(id, val);
-			}
+		StorageEventMessenger.addEventListener('Log_Write', async (newValue: string) => {
+			const id = Number(newValue);
+			await this.DbLogger.getLog(id - 1);
 		});
 	}
 	async addOutput(...lines: string[]) {
@@ -23,7 +21,7 @@ export default class Logger {
 	}
 	_displayOutput(line: string) {
 		const NewElement = document.createElement('div');
-		NewElement.innerHTML = `<span style="color:#bbb;">${getDisplayTime(new Date())}:</span> ` + line;
-		OutputSection.prepend(NewElement);
+		NewElement.innerHTML = `<span class="log-timestamp">${getDisplayTime(new Date())}:</span> ` + line;
+		LogSection.prepend(NewElement);
 	}
 }

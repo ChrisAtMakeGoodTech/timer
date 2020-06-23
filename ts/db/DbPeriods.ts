@@ -3,6 +3,7 @@ import PeriodRecord from './PeriodRecord';
 import Statics from './DbPeriodStatics';
 import setUpDbPeriod from './setupDbPeriod';
 import IPeriod from '../Classes/IPeriod';
+import StorageEventMessenger from '../objects/StorageEventMessenger';
 
 let DbPromise: Promise<IDBPDatabase<PeriodRecord>> | null = setUpDbPeriod();
 
@@ -28,7 +29,14 @@ export default class DbPeriods {
 
 	async addPeriod(period: IPeriod) {
 		if (DbPromise) await DbPromise;
-		return await Db.add(Statics.DbStoreName, period);
+		const newId = await Db.add(Statics.DbStoreName, period);
+		StorageEventMessenger.dispatchEvent('Period_Add', String(newId));
+		return newId;
+	}
+	async deletePeriod(periodId: number) {
+		if (DbPromise) await DbPromise;
+		await Db.delete(Statics.DbStoreName, periodId);
+		StorageEventMessenger.dispatchEvent('Period_Remove', String(periodId));
 	}
 	async getPeriodById(id: number) {
 		if (DbPromise) await DbPromise;

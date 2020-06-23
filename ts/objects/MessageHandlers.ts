@@ -4,10 +4,11 @@ import { StartButtons, Counter } from './Elements';
 import setUpButtons from '../setup/buttons';
 import getDisplayTime from '../functions/getDisplayTime';
 import PeriodWorker from './PeriodWorker'
+import IMessageHandlers from './IMessageHandlers';
 
 const OutputLogger = new Logger();
 
-export default {
+const MessageHandlers: IMessageHandlers = {
 	channelRegistered(_event: MessageEvent) {
 		PeriodWorker.postMessage({ type: 'getPeriods' });
 	},
@@ -26,7 +27,7 @@ export default {
 		Counter.textContent = '';
 	},
 	timerUpdate(event: MessageEvent) {
-		// @ts-ignore
+		// @ts-expect-error
 		const { timeToExpire, timerDisplay, period: _period } = event.data;
 		const IsNegative = timeToExpire < 0;
 		if (IsNegative !== State.TimerIsNegative) {
@@ -47,3 +48,5 @@ export default {
 
 	},
 };
+
+export default MessageHandlers;

@@ -1,4 +1,5 @@
 import IPeriod from './IPeriod.js';
+import getDisplayTimespan from '../functions/getDisplayTimespan';
 
 type updateCallback = (timeToExpire: number, timerDisplay: string, period: IPeriod) => void;
 type expireCallback = (period: IPeriod) => void;
@@ -28,7 +29,7 @@ export default class PeriodTimer {
 		if (typeof updateCallback === 'function') {
 			const doUpdateTimeout = () => {
 				const TimeToExpire = this.TimeToExpire;
-				updateCallback(TimeToExpire, this._timerDisplay(TimeToExpire), period);
+				updateCallback(TimeToExpire, getDisplayTimespan(TimeToExpire), period);
 				this.UpdateTimeout = self.setTimeout(doUpdateTimeout, 1000);
 			};
 
@@ -45,7 +46,7 @@ export default class PeriodTimer {
 					const TimeToReminder = period.ReminderFrequencyMilliseconds;
 					const doReminderTimeout = () => {
 						const TimeExpired = this.TimeToExpire * -1;
-						reminderCallback(TimeExpired, this._timerDisplay(TimeExpired), period);
+						reminderCallback(TimeExpired, getDisplayTimespan(TimeExpired), period);
 						this.ReminderTimeout = self.setTimeout(doReminderTimeout, TimeToReminder);
 					};
 					this.ReminderTimeout = self.setTimeout(doReminderTimeout, TimeToReminder);
@@ -75,19 +76,6 @@ export default class PeriodTimer {
 	}
 
 	get TimerDisplay() {
-		return this._timerDisplay(this.TimeToExpire);
-	}
-
-	_timerDisplay(timeTil: number) {
-		const IsNegative = timeTil < 0;
-		const Sign = IsNegative ? '-' : '';
-
-		const TotalSecondsTil = Math.floor(Math.abs(timeTil) / 1000);
-
-		const HoursTil = Math.floor(TotalSecondsTil / (60 * 60));
-		const MinutesTil = Math.floor((TotalSecondsTil / 60) - (HoursTil * 60));
-		const SecondsTil = Math.floor(TotalSecondsTil - ((HoursTil * 60 * 60) + (MinutesTil * 60)));
-
-		return `${Sign}${String(HoursTil).padStart(2, '0')}:${String(MinutesTil).padStart(2, '0')}:${String(SecondsTil).padStart(2, '0')}`;
+		return getDisplayTimespan(this.TimeToExpire);
 	}
 }

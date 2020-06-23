@@ -1,4 +1,5 @@
-import { DBSchema, openDB, deleteDB as _deleteDB, wrap as _wrap, unwrap as _unwrap, IDBPDatabase } from 'idb';
+import { DBSchema, openDB, IDBPDatabase } from 'idb';
+import StorageEventMessenger from '../objects/StorageEventMessenger';
 
 interface IStatics {
 	DbName: 'TimersDb';
@@ -69,7 +70,7 @@ export default class DbLogger {
 	async addLog(line: string) {
 		if (DbPromise) await DbPromise;
 		const id = await Db.add(Statics.DbStoreName, { text: line, date: new Date() });
-		localStorage.setItem(`wrote-db-${Statics.DbName}-${Statics.DbStoreName}`, String(id));
+		StorageEventMessenger.dispatchEvent('Log_Write', String(id));
 	}
 	async getLog(id: number) {
 		if (DbPromise) await DbPromise;

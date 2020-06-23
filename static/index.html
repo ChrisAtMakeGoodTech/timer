@@ -11,7 +11,17 @@
 <body>
 	<div id="counter"></div>
 	<div id="start-buttons"></div>
-	<div id="output"></div>
+
+	<div id="tabs">
+		<button class="tab active" data-tabname="log">Log</button>
+		<button class="tab" data-tabname="scheduled">Scheduled Notifications</button>
+		<button class="tab" data-tabname="periods">Periods</button>
+	</div>
+	<div id="sections">
+		<div class="section active" data-tabname="log" id="section-log"></div>
+		<div class="section" data-tabname="scheduled">NYI</div>
+		<div class="section" data-tabname="periods" id="section-periods">NYI</div>
+	</div>
 </body>
 
 </html>
